@@ -3204,20 +3204,25 @@
 
       function openModal() {
         modal.hidden = false;
+        modal.dataset.opening = "1";
         requestAnimationFrame(() =>
-          requestAnimationFrame(() => modal.classList.add("is-open"))
+          requestAnimationFrame(() => {
+            if (modal.dataset.opening) modal.classList.add("is-open");
+          })
         );
       }
 
       function closeModal() {
+        delete modal.dataset.opening;
         modal.classList.remove("is-open");
-        sheet.addEventListener(
-          "transitionend",
-          () => {
-            modal.hidden = true;
-          },
-          { once: true }
-        );
+        const finish = () => {
+          sheet.removeEventListener("transitionend", finish);
+          clearTimeout(fallback);
+          /* skip if the modal was reopened while closing */
+          if (!modal.classList.contains("is-open")) modal.hidden = true;
+        };
+        const fallback = setTimeout(finish, 500);
+        sheet.addEventListener("transitionend", finish);
       }
 
       modal
