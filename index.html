@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#08562e" />
     <meta
       name="description"
       content="FutBots interactive football prediction interface"
@@ -27,8 +31,19 @@
         min-height: 100%;
       }
 
+      html {
+        background-color: #08562e;
+      }
+
       body {
-        background: #000;
+        background: linear-gradient(
+            180deg,
+            #08562e 0%,
+            #021e0f 16.967%,
+            #000000 36.382%
+          )
+          no-repeat #000;
+        background-size: 100% 100dvh;
         font-family: "Manrope", sans-serif;
         -webkit-font-smoothing: antialiased;
       }
@@ -2656,6 +2671,21 @@
       const screens = document.querySelectorAll("[data-screen]");
       const state = { loggedIn: false, plan: null, email: null };
 
+      /* keep Safari's chrome / overscroll tint in sync with each screen */
+      const SCREEN_TINTS = {
+        home: "#08562e",
+        profile: "#020403",
+        details: "#044423",
+      };
+
+      function applyScreenTint(target) {
+        const tint = SCREEN_TINTS[target] || "#010603";
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute("content", tint);
+        document.documentElement.style.backgroundColor = tint;
+      }
+
       /* auth + plans are floating windows: they open above the current
          screen instead of replacing it */
       const MODAL_SCREENS = ["auth", "login", "signup", "plans"];
@@ -2673,6 +2703,7 @@
         screens.forEach((s) => {
           s.hidden = s.dataset.screen !== target;
         });
+        applyScreenTint(target);
         window.scrollTo(0, 0);
       }
 
