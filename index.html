@@ -1,0 +1,3336 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="FutBots interactive football prediction interface"
+    />
+    <title>FutBots — AI football predictions</title>
+    <link rel="icon" href="./public/assets/brand-ball.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Red+Hat+Display:wght@700&display=swap"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        background: #000;
+        font-family: "Manrope", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      button {
+        font-family: inherit;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: inherit;
+      }
+
+      img {
+        display: block;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      :root {
+        --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+        --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+        --hover: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .screen {
+        position: relative;
+        width: 100%;
+        min-height: 100dvh;
+        overflow: hidden;
+      }
+
+      .screen:not([hidden]) {
+        animation: screen-in 0.45s var(--ease-out);
+      }
+
+      @keyframes screen-in {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ============ HOME ============ */
+
+      .screen--home {
+        background: linear-gradient(
+          180deg,
+          #08562e 0%,
+          #021e0f 16.967%,
+          #000000 36.382%
+        );
+      }
+
+      .home-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 17px;
+        padding: 24px 16px 36px;
+        width: 100%;
+      }
+
+      .home-top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 17px;
+        width: 100%;
+      }
+
+      .home-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .home-brand {
+        display: none;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .home-brand__ball {
+        width: 34px;
+        height: 34px;
+        object-fit: cover;
+      }
+
+      .home-brand__wordmark {
+        width: 96px;
+        height: 24.5px;
+      }
+
+      .pill {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 9px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.11);
+        border-radius: 40px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: -0.56px;
+        white-space: nowrap;
+        transition: background var(--hover), border-color var(--hover);
+      }
+
+      .pill img {
+        width: 21.5px;
+        height: 21.5px;
+      }
+
+      .icon-btn {
+        position: relative;
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.11);
+        border-radius: 40px;
+        flex-shrink: 0;
+        transition: background var(--hover), border-color var(--hover);
+      }
+
+      .pill:hover,
+      .icon-btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.28);
+      }
+
+
+      .calendar {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        width: 353px;
+        max-width: 100%;
+      }
+
+      .calendar__month {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        width: 100%;
+      }
+
+      .calendar__month span {
+        width: 92px;
+        font-size: 20px;
+        font-weight: 500;
+        color: #fff;
+        text-align: center;
+      }
+
+      .cal-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        margin: -9px;
+        border-radius: 50%;
+        transition: background var(--hover);
+      }
+
+      .cal-nav:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .cal-nav img {
+        width: 6px;
+        height: 10px;
+      }
+
+      .cal-nav--prev img {
+        transform: rotate(180deg);
+      }
+
+      .calendar__days {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 31px;
+        width: 100%;
+        height: 69px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        cursor: grab;
+        padding: 0 2px;
+      }
+
+      .calendar__days::-webkit-scrollbar {
+        display: none;
+      }
+
+      .calendar__days.is-dragging {
+        cursor: grabbing;
+        scroll-behavior: auto;
+        scroll-snap-type: none;
+      }
+
+      .day {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        gap: 11px;
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.4);
+        border-radius: 50px;
+        transition: color var(--hover);
+      }
+
+      .day:hover {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .day span,
+      .day b {
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .day--active {
+        width: 38px;
+        height: 69px;
+        padding: 6px 4px 4px 3px;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.07);
+        color: #fff;
+      }
+
+      .day--active b {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 31px;
+        height: 31px;
+        background: #fff;
+        border-radius: 40px;
+        color: #190646;
+      }
+
+      .filters {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .filter {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+        flex: 1 0 0;
+        min-width: 1px;
+      }
+
+      .filter > span {
+        font-size: 12px;
+        font-weight: 500;
+        color: #6a927c;
+      }
+
+      /* Gradient stroke ring — measured from Figma: white 14% top → 9% bottom */
+      .g-stroke {
+        position: relative;
+      }
+
+      .g-stroke::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          180deg,
+          var(--ring-a, rgba(255, 255, 255, 0.14)),
+          var(--ring-b, rgba(255, 255, 255, 0.09))
+        );
+        -webkit-mask: linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .filter__control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 48px;
+        padding: 16px;
+        background: rgba(13, 53, 33, 0.4);
+        border: 1px solid transparent;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #6a927c;
+        white-space: nowrap;
+        transition: background var(--hover), color var(--hover);
+      }
+
+      .filter__control:hover {
+        background: rgba(13, 53, 33, 0.65);
+        color: #8fb6a1;
+      }
+
+      .filter__control:hover::before {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.18)
+        );
+      }
+
+      .filter__control img {
+        width: 5px;
+        height: 10px;
+        transform: rotate(90deg);
+        transition: transform 0.3s var(--ease-out);
+      }
+
+      .filter.is-open .filter__control img {
+        transform: rotate(-90deg);
+      }
+
+      /* Dropdown panel — 1:1 from Figma 30:230 */
+      .dd-panel {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        min-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 22px;
+        padding: 18px 16px;
+        background: linear-gradient(
+          180deg,
+          rgba(10, 40, 25, 0.72) 0%,
+          rgba(3, 16, 10, 0.86) 100%
+        );
+        backdrop-filter: blur(18px) saturate(1.15);
+        -webkit-backdrop-filter: blur(18px) saturate(1.15);
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+        border: 1px solid transparent;
+        border-radius: 30px;
+        z-index: 30;
+        opacity: 0;
+        transform: translateY(-6px);
+        transform-origin: top;
+        pointer-events: none;
+        transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out);
+      }
+
+      .filter.is-open .dd-panel {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+
+      .dd-item {
+        font-size: 14px;
+        font-weight: 500;
+        color: #8fb7a0;
+        white-space: nowrap;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+        transition: color var(--hover);
+      }
+
+      .dd-item:hover {
+        color: #fff;
+      }
+
+      /* Date picker panel — design-system styled */
+      .dp-panel {
+        width: 280px;
+        gap: 14px;
+        align-items: stretch;
+      }
+
+      .dp-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 6px;
+      }
+
+      .dp-head span {
+        font-size: 14px;
+        font-weight: 500;
+        color: #fff;
+        text-align: center;
+      }
+
+      .dp-head .cal-nav {
+        margin: 0;
+      }
+
+      .dp-head .cal-nav:disabled {
+        opacity: 0.25;
+        pointer-events: none;
+      }
+
+      .dp-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        width: 100%;
+      }
+
+      .dp-dow {
+        font-size: 11px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.4);
+        text-align: center;
+        line-height: 24px;
+      }
+
+      .dp-day {
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 500;
+        color: #6a927c;
+        transition: background var(--hover), color var(--hover);
+      }
+
+      .dp-day:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+
+      .dp-day.is-selected {
+        background: #fff;
+        color: #190646;
+      }
+
+      .dp-day:disabled {
+        opacity: 0.25;
+        pointer-events: none;
+      }
+
+      .home-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 0;
+        width: 100%;
+      }
+
+      /* Free Score Day */
+
+      .fsd {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        padding: 20px 16px;
+        border-radius: 16px;
+        overflow: hidden;
+        width: 100%;
+        isolation: isolate;
+      }
+
+      .fsd__bg {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: #000;
+        border-radius: 16px;
+      }
+
+      .fsd__bg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.6;
+        border-radius: 16px;
+      }
+
+      .fsd__title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .fsd__title > img {
+        width: 16px;
+        height: 17px;
+        transform: scaleY(-1);
+      }
+
+      .fsd__title h2 {
+        font-family: "Red Hat Display", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      .fsd__free {
+        padding: 4px 12px;
+        background: linear-gradient(117.121deg, #ffffff 17.669%, #d1d1d1 96.937%);
+        border-radius: 40px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #000;
+        white-space: nowrap;
+      }
+
+      /* Prediction section */
+
+      .predictions {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        width: 100%;
+      }
+
+      .predictions > h2 {
+        font-family: "Red Hat Display", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .pcards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 8px;
+        width: 100%;
+      }
+
+      .pcard {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        width: 100%;
+        padding: 20px 16px;
+        background: rgba(13, 53, 33, 0.1);
+        border: 1px solid rgba(23, 54, 38, 0.5);
+        border-radius: 16px;
+        transition: border-color var(--hover), background var(--hover);
+      }
+
+      .pcard:hover {
+        background: rgba(13, 53, 33, 0.25);
+        border-color: rgba(37, 84, 59, 0.8);
+      }
+
+      .pcard--done {
+        gap: 12px;
+      }
+
+      .pcard.state-swap {
+        animation: card-swap 0.5s var(--ease-out);
+      }
+
+      @keyframes card-swap {
+        from {
+          opacity: 0;
+          transform: translateY(6px) scale(0.985);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .pcard__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .pcard__date {
+        font-size: 12px;
+        font-weight: 500;
+        color: #575f59;
+        white-space: nowrap;
+      }
+
+      .badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .badge--soon {
+        color: #1eb978;
+      }
+
+      .badge--soon img {
+        width: 12px;
+        height: 12px;
+      }
+
+      .badge--live {
+        background: #1b0403;
+        border: 1px solid rgba(234, 67, 53, 0.3);
+        color: #ea4335;
+      }
+
+      .badge--live img {
+        width: 6px;
+        height: 6px;
+        animation: live-pulse 1.6s ease-in-out infinite;
+      }
+
+      @keyframes live-pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.35;
+        }
+      }
+
+      .teams {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1 0 0;
+        min-width: 1px;
+        width: 100%;
+      }
+
+      .team {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 122px;
+      }
+
+      .team img {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .team span {
+        font-size: 12px;
+        font-weight: 500;
+        color: #fff;
+        white-space: nowrap;
+        max-width: 122px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .teams > b {
+        font-size: 18px;
+        font-weight: 500;
+        color: #575f59;
+        text-align: center;
+      }
+
+      .teams--light > b {
+        color: #fff;
+      }
+
+      .glow-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 16px;
+        background: #fff;
+        border: 1px solid #fff;
+        border-radius: 31px;
+        filter: drop-shadow(0px 0px 17px rgba(255, 255, 255, 0.45));
+        font-size: 16px;
+        font-weight: 600;
+        color: #000;
+        white-space: nowrap;
+        transition: filter var(--hover), transform var(--hover);
+      }
+
+      .glow-btn:hover {
+        filter: drop-shadow(0px 0px 26px rgba(255, 255, 255, 0.7));
+        transform: translateY(-1px);
+      }
+
+      .glow-btn:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      .glow-btn img {
+        width: 16px;
+        height: 17px;
+        transform: scaleY(-1);
+      }
+
+      .analyzing {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 16px;
+        border-radius: 31px;
+        width: 100%;
+      }
+
+      .analyzing img {
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .analyzing span {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      .pcard__result {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .stacked-teams {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 143px;
+      }
+
+      .stacked-teams > div {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .stacked-teams img {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .stacked-teams span {
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+        white-space: nowrap;
+        max-width: 93px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .see-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 16px;
+        border-radius: 31px;
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: underline;
+        text-underline-position: from-font;
+        white-space: nowrap;
+        transition: color var(--hover);
+      }
+
+      .see-link img {
+        width: 4px;
+        height: 8px;
+        transition: transform var(--hover), filter var(--hover);
+      }
+
+      .see-link:hover {
+        color: #fff;
+      }
+
+      .see-link:hover img {
+        transform: translateX(3px);
+        filter: brightness(2.2);
+      }
+
+      /* ============ PROFILE ============ */
+
+      .screen--profile {
+        background: linear-gradient(180deg, #020403 0%, #010603 83.41%);
+      }
+
+      .profile-wrap {
+        position: relative;
+        width: 100%;
+        max-width: 402px;
+        margin: 0 auto;
+        padding: 108px 24px 48px;
+      }
+
+      .profile-title {
+        position: absolute;
+        left: 50%;
+        top: 34px;
+        transform: translateX(-50%);
+        font-size: 20px;
+        font-weight: 500;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      .plan-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 24px 20px;
+        background: linear-gradient(180deg, #020603 0%, #132017 102.32%);
+        border: 1px solid #24302a;
+        border-radius: 24px;
+        filter: drop-shadow(0px 4px 38px #011d11);
+        margin-bottom: 13px;
+      }
+
+      .plan-card__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .plan-card__eyebrow {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: -0.48px;
+        background: linear-gradient(90deg, #fbea48 0%, #686a2e 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .plan-card__name {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.96px;
+        color: #fff;
+      }
+
+      .plan-card__desc {
+        font-size: 13px;
+        font-weight: 500;
+        line-height: normal;
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .plan-card__menu {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 43px;
+        height: 42px;
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.11);
+        border-radius: 40px;
+        transition: background var(--hover), border-color var(--hover);
+      }
+
+      .plan-card__menu:hover {
+        background: rgba(255, 255, 255, 0.16);
+        border-color: rgba(255, 255, 255, 0.22);
+      }
+
+      .menu-dots {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 18px;
+        height: 18px;
+      }
+
+      .menu-dots img {
+        width: 3px;
+        height: 3px;
+      }
+
+      .profile-predictions {
+        padding: 10px;
+      }
+
+      .pcards--profile {
+        padding: 0;
+      }
+
+      .screen--profile .badge--soon {
+        background: #04120c;
+      }
+
+      .plan-card__cta {
+        margin-top: 8px;
+      }
+
+      .plan-menu {
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .plan-menu-panel {
+        left: auto;
+        right: 0;
+        min-width: 185px;
+        gap: 16px;
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .plan-menu.is-open .plan-menu-panel {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+
+      .dd-item--danger {
+        color: #ea4335;
+      }
+
+      .dd-item--danger:hover {
+        color: #ff7a6e;
+      }
+
+      .account-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        width: 100%;
+        margin-bottom: 13px;
+        padding: 16px 20px;
+        background: rgba(13, 53, 33, 0.1);
+        border: 1px solid rgba(23, 54, 38, 0.5);
+        border-radius: 16px;
+      }
+
+      .account-card__id {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .account-card__id img {
+        width: 21.5px;
+        height: 21.5px;
+        flex-shrink: 0;
+      }
+
+      .account-card__id span {
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .logout-btn {
+        flex-shrink: 0;
+        padding: 8px 14px;
+        background: #1b0403;
+        border: 1px solid rgba(234, 67, 53, 0.3);
+        border-radius: 40px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #ea4335;
+        white-space: nowrap;
+        transition: background var(--hover), border-color var(--hover);
+      }
+
+      .logout-btn:hover {
+        background: #2b0806;
+        border-color: rgba(234, 67, 53, 0.55);
+      }
+
+      /* ============ PLANS (Figma 1:617) ============ */
+
+      .screen--plans {
+        background: linear-gradient(180deg, #020403 0%, #010603 83.41%);
+      }
+
+      .plans-wrap {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 402px;
+        min-height: 100dvh;
+        margin: 0 auto;
+        padding: 16px 30px 31px;
+      }
+
+      .plans-head {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .plans-head .back-btn {
+        position: relative;
+        left: auto;
+        top: auto;
+      }
+
+      .plan-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        margin-bottom: 40px;
+      }
+
+      .plan-option {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        min-height: 129px;
+        padding: 18px 20px;
+        text-align: left;
+        background: transparent;
+        border: 1px solid #2c2c2c;
+        border-radius: 24px;
+        transition: border-color var(--hover), background var(--hover),
+          filter var(--hover);
+      }
+
+      button.plan-option:hover {
+        border-color: #4a4a4a;
+      }
+
+      .plan-option--tall {
+        min-height: 151px;
+      }
+
+      .plan-option--taller {
+        min-height: 165px;
+      }
+
+      .plan-option.is-selected {
+        background: #101010;
+        border-color: #fff;
+        filter: drop-shadow(0px 4px 36px rgba(255, 255, 255, 0.25));
+      }
+
+      .plan-option.is-selected .plan-option__price {
+        color: #fff;
+      }
+
+      .plan-option__head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .plan-option__titles {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .current-pill {
+        display: flex;
+        align-items: center;
+        padding: 3px 10px;
+        border-radius: 40px;
+        background: #04120c;
+        border: 1px solid rgba(30, 185, 120, 0.3);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: -0.48px;
+        line-height: normal;
+        color: #1eb978;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      div.plan-option[data-plan] {
+        cursor: default;
+      }
+
+      button.plan-option:disabled {
+        cursor: default;
+      }
+
+      button.plan-option:disabled:hover {
+        border-color: #2c2c2c;
+      }
+
+      .plan-option__label {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: -0.64px;
+        line-height: normal;
+        color: rgba(255, 255, 255, 0.3);
+        white-space: nowrap;
+      }
+
+      .plan-option__flag {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: -0.64px;
+        line-height: normal;
+        background: linear-gradient(90deg, #fbea48 0%, #7c760e 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        white-space: nowrap;
+      }
+
+      .plan-option__price {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.72px;
+        line-height: normal;
+        color: #818181;
+        white-space: nowrap;
+        transition: color var(--hover);
+      }
+
+      .plan-option__desc {
+        font-size: 13px;
+        font-weight: 500;
+        line-height: normal;
+        color: rgba(255, 255, 255, 0.3);
+        width: 100%;
+      }
+
+      .duration-pill {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 8px;
+        border-radius: 40px;
+        background: linear-gradient(180deg, #131313 0%, #0f0f0f 100%);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: -0.48px;
+        line-height: normal;
+        color: #818181;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .duration-pill img {
+        width: 13px;
+        height: 13px;
+      }
+
+      .duration-pill--light {
+        background: linear-gradient(180deg, #ffffff 0%, #bebebe 100%);
+        color: #010503;
+      }
+
+      .plans-footer {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-top: auto;
+      }
+
+      .pay-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 16px;
+        background: #fff;
+        border: 1px solid #fff;
+        border-radius: 31px;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: normal;
+        color: #14053d;
+        white-space: nowrap;
+        transition: filter var(--hover), transform var(--hover);
+      }
+
+      .pay-btn:hover {
+        filter: drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.45));
+        transform: translateY(-1px);
+      }
+
+      .pay-btn:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      .pay-note {
+        margin-top: 11px;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: normal;
+        color: rgba(255, 255, 255, 0.3);
+        text-align: center;
+      }
+
+      /* ============ DETAILS ============ */
+
+      .screen--details {
+        background-color: #000904;
+        background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 402 1102' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%25' width='100%25' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(-21.9 31.943 -25.9 -14.876 438.5 -16.017)'><stop stop-color='rgba(4,68,35,1)' offset='0'/><stop stop-color='rgba(2,35,18,1)' offset='0.5'/><stop stop-color='rgba(1,22,11,1)' offset='0.75'/><stop stop-color='rgba(0,9,4,1)' offset='1'/></radialGradient></defs></svg>");
+        background-size: 100% 100%;
+      }
+
+      .details-wrap {
+        position: relative;
+        width: 100%;
+        max-width: 402px;
+        min-height: 1102px;
+        margin: 0 auto;
+        padding: 195px 0 79px;
+      }
+
+      .back-btn {
+        position: absolute;
+        left: 16px;
+        top: 27px;
+      }
+
+      .back-btn img {
+        position: absolute;
+        left: 17px;
+        top: 14px;
+        width: 5.5px;
+        height: 11.5px;
+      }
+
+      .details-title {
+        position: absolute;
+        left: 16px;
+        top: 93px;
+        font-size: 28px;
+        font-weight: 500;
+        color: #fff;
+        line-height: normal;
+        white-space: pre;
+      }
+
+      .details-pitch {
+        position: absolute;
+        left: 236px;
+        top: 95px;
+        width: 148px;
+        height: 74px;
+      }
+
+      .d-cards {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 16px;
+        gap: 8px;
+      }
+
+      .d-card {
+        position: relative;
+        width: 368px;
+        flex-shrink: 0;
+        background: rgba(13, 53, 33, 0.2);
+        border-radius: 19px;
+        --ring-a: rgba(255, 255, 255, 0.15);
+        --ring-b: rgba(255, 255, 255, 0.1);
+      }
+
+      .d-card.g-stroke::before {
+        inset: 0;
+      }
+
+      .d-card--score {
+        height: 348px;
+      }
+
+      .d-card--total,
+      .d-card--handicap {
+        height: 231px;
+      }
+
+      .d-card--handicap {
+        margin-top: 2px;
+      }
+
+      .d-card > * {
+        position: absolute;
+      }
+
+      .d-ball {
+        width: 18px;
+        height: 18px;
+      }
+
+      .d-section {
+        font-family: "Red Hat Display", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        white-space: nowrap;
+        background: linear-gradient(96.321deg, #6a927c 0.68286%, #166f4a 97.815%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .ai-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 50px;
+        background: linear-gradient(
+          180deg,
+          #072616 5.263%,
+          rgba(13, 53, 33, 0.4) 90.898%
+        );
+      }
+
+      .d-card .ai-badge {
+        transform: translateX(-50%);
+      }
+
+      .ai-badge img {
+        width: 10px;
+        height: 10px;
+        transform: scaleY(-1);
+      }
+
+      .ai-badge span {
+        font-size: 8px;
+        font-weight: 500;
+        color: #6a927c;
+        white-space: nowrap;
+      }
+
+      .d-line-h {
+        width: 331px;
+        height: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .d-line-v {
+        width: 0;
+        height: 110px;
+        border-left: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .d-flag {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .d-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #6a927c;
+        white-space: nowrap;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .d-label--c {
+        transform: translateX(-50%);
+        text-align: center;
+      }
+
+      .d-score {
+        transform: translateX(-50%);
+        font-size: 22px;
+        font-weight: 500;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .d-pick {
+        font-size: 20px;
+        font-weight: 600;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      .d-num {
+        font-size: 12px;
+        font-weight: 500;
+        color: #6a927c;
+        white-space: nowrap;
+      }
+
+      /* ============ AUTH SCREENS ============ */
+
+      .screen--flags {
+        background: #010603 url("./public/assets/background.jpg") top center /
+          100% auto no-repeat;
+      }
+
+      .screen--plain {
+        background: linear-gradient(to bottom, #000000, #010603 83.41%);
+      }
+
+      /* auth + plans float above the underlying screen */
+      .screen--flags,
+      .screen--plain,
+      .screen--plans {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        min-height: 0;
+        overflow-y: auto;
+      }
+
+      .auth-dialog {
+        display: contents;
+      }
+
+      .auth-side {
+        display: none;
+      }
+
+      .auth-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 36px;
+        padding-top: 148px;
+        width: 100%;
+      }
+
+      .auth-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        width: 252px;
+      }
+
+      .auth-hero__ball {
+        width: 140.566px;
+        height: 140.566px;
+      }
+
+      .auth-hero h1,
+      .auth-title {
+        font-size: 36px;
+        font-weight: 700;
+        letter-spacing: -1.44px;
+        color: #fff;
+        text-align: center;
+        width: 100%;
+      }
+
+      .auth-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 0 16px;
+      }
+
+      .social-button {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 300px;
+        height: 64px;
+        padding: 18px 20px;
+        border: 1px solid #616161;
+        border-radius: 48px;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.36px;
+        white-space: nowrap;
+        text-align: left;
+        transition: background var(--hover), border-color var(--hover),
+          transform var(--hover);
+      }
+
+      .social-button:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #9e9e9e;
+        transform: translateY(-1px);
+      }
+
+      .social-button:active {
+        transform: translateY(0) scale(0.99);
+      }
+
+      .social-button__icon {
+        position: relative;
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+
+      .social-button__icon img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .social-button__icon--futbot img {
+        inset: auto;
+        width: 121.62%;
+        height: 121.62%;
+        left: -10.81%;
+        top: -10.27%;
+      }
+
+      .field {
+        display: block;
+        width: 100%;
+        max-width: 300px;
+        height: 64px;
+        padding: 18px 20px;
+        border: 1px solid #616161;
+        border-radius: 48px;
+        background: transparent;
+        color: #fff;
+        font-family: inherit;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.72px;
+        outline: none;
+        transition: border-color var(--hover), background var(--hover);
+      }
+
+      .field::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .field:hover {
+        border-color: #9e9e9e;
+      }
+
+      .field:focus {
+        border-color: #fff;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .primary-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 300px;
+        height: 64px;
+        border: 1px solid #fff;
+        border-radius: 48px;
+        background: #fff;
+        color: #010603;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.72px;
+        white-space: nowrap;
+        transition: box-shadow var(--hover), transform var(--hover);
+      }
+
+      .primary-button:hover {
+        box-shadow: 0 0 24px rgba(255, 255, 255, 0.45);
+        transform: translateY(-1px);
+      }
+
+      .primary-button:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      .text-link {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.72px;
+        color: #fff;
+        white-space: nowrap;
+        transition: opacity var(--hover);
+      }
+
+      .text-link:hover {
+        opacity: 0.65;
+      }
+
+      .auth-footer {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .auth-footer__brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .auth-footer__ball {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+      }
+
+      .auth-footer__wordmark {
+        width: 76.35px;
+        height: 19.482px;
+      }
+
+      .auth-footer__disclaimer {
+        width: 371px;
+        max-width: calc(100% - 30px);
+        font-size: 10px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.3);
+        text-align: center;
+        line-height: normal;
+      }
+
+      /* ============ MODAL ============ */
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+      }
+
+      .modal__overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .modal__sheet {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+        width: 367px;
+        max-width: calc(100% - 35px);
+        margin-bottom: 20px;
+        padding: 24px 20px;
+        background: #000;
+        border: 1px solid #272727;
+        border-radius: 32px;
+        transform: translateY(calc(100% + 24px));
+        transition: transform 0.55s var(--ease-sheet);
+        will-change: transform;
+      }
+
+      .modal.is-open .modal__overlay {
+        opacity: 1;
+      }
+
+      .modal.is-open .modal__sheet {
+        transform: translateY(0);
+      }
+
+      .modal__head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .modal__head h2 {
+        width: 222px;
+        font-family: "Red Hat Display", sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .modal__head .ai-badge {
+        flex-shrink: 0;
+      }
+
+      .modal__teams {
+        height: 56px;
+      }
+
+      .modal__note {
+        width: 100%;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.4);
+        line-height: normal;
+      }
+
+      .modal__note ul {
+        list-style: disc;
+        margin: 0;
+      }
+
+      .modal__note li {
+        margin-left: 18px;
+      }
+
+      .modal__note p:last-child {
+        margin-top: 15px;
+      }
+
+      .modal__cta {
+        height: 56px;
+        padding: 16px;
+      }
+
+      /* ============ RESPONSIVE: TABLET ≥768 ============ */
+
+      @media (min-width: 768px) {
+        .home-wrap {
+          max-width: 720px;
+          margin: 0 auto;
+          padding: 32px 24px 56px;
+          gap: 28px;
+        }
+
+        .home-body {
+          gap: 20px;
+        }
+
+        /* Prediction cards → grid */
+        .pcards {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+          padding: 0;
+        }
+
+        .pcard {
+          justify-content: space-between;
+        }
+
+        .pcard--done .pcard__result {
+          margin: auto 0;
+        }
+
+        /* Profile → wider column */
+        .profile-wrap {
+          max-width: 720px;
+          padding: 108px 24px 64px;
+        }
+
+        .profile-predictions {
+          padding: 10px 0;
+        }
+
+        /* Modal → centered dialog */
+        .modal {
+          align-items: center;
+        }
+
+        .modal__sheet {
+          margin-bottom: 0;
+          transform: translateY(28px) scale(0.96);
+          opacity: 0;
+          transition: transform 0.45s var(--ease-out), opacity 0.35s ease;
+        }
+
+        .modal.is-open .modal__sheet {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ============ RESPONSIVE: DESKTOP ≥1024 ============ */
+
+      @media (min-width: 1024px) {
+        /* --- home: brand + toolbar row --- */
+        .home-wrap {
+          max-width: 1200px;
+          padding: 32px 40px 64px;
+          gap: 36px;
+        }
+
+        .home-brand {
+          display: flex;
+        }
+
+        .home-header {
+          justify-content: flex-start;
+          gap: 16px;
+        }
+
+        .home-header .pill {
+          margin-left: auto;
+        }
+
+        .home-top {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 24px;
+        }
+
+        .home-top .home-header {
+          flex-basis: 100%;
+        }
+
+        .calendar {
+          width: 420px;
+        }
+
+        .filters {
+          width: auto;
+          flex: 0 1 480px;
+          gap: 16px;
+        }
+
+        /* Free Score Day → horizontal hero */
+        .fsd {
+          flex-direction: row;
+          align-items: center;
+          gap: 32px;
+          padding: 24px 32px;
+        }
+
+        .fsd .teams {
+          width: auto;
+          flex: 1;
+          max-width: 400px;
+          margin: 0 auto;
+        }
+
+        .fsd .glow-btn {
+          width: 280px;
+          flex: none;
+          margin-left: auto;
+        }
+
+        /* --- details: header row + cards side by side --- */
+        .details-wrap {
+          max-width: 1216px;
+          min-height: 0;
+          margin: 0 auto;
+          padding: 48px 32px 80px;
+        }
+
+        .back-btn {
+          position: relative;
+          left: auto;
+          top: auto;
+        }
+
+        .details-title {
+          position: static;
+          white-space: normal;
+          font-size: 32px;
+        }
+
+        .details-pitch {
+          position: static;
+          margin-left: auto;
+        }
+
+        .details-head {
+          display: flex;
+          align-items: center;
+          gap: 28px;
+        }
+
+        .d-cards {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          justify-content: center;
+          padding-left: 0;
+          gap: 24px;
+          margin-top: 48px;
+        }
+
+        .d-card--handicap {
+          margin-top: 0;
+        }
+
+        /* --- profile: header row --- */
+        .profile-wrap {
+          max-width: 1200px;
+          padding: 48px 40px 80px;
+        }
+
+        .profile-head {
+          display: flex;
+          align-items: center;
+          gap: 28px;
+          margin-bottom: 32px;
+        }
+
+        .profile-title {
+          position: static;
+          transform: none;
+          font-size: 28px;
+        }
+
+        /* --- plans: floating dialog --- */
+        .screen--plans {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 48px;
+          background: rgba(1, 4, 2, 0.7);
+          -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+        }
+
+        .screen--plans .plans-wrap {
+          min-height: 0;
+          max-height: 100%;
+          overflow-y: auto;
+          padding: 28px 30px 0;
+          border-radius: 28px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: linear-gradient(180deg, #020403 0%, #010603 83.41%);
+          box-shadow: 0 40px 120px rgba(0, 0, 0, 0.65);
+        }
+
+        .plans-head {
+          display: none;
+        }
+
+        .plans-footer {
+          position: sticky;
+          bottom: 0;
+          padding: 16px 0 24px;
+          background: linear-gradient(180deg, rgba(1, 6, 3, 0) 0%, #010603 40%);
+        }
+
+        /* --- auth: floating dialog --- */
+        .screen--flags,
+        .screen--plain {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 40px;
+          background: rgba(1, 4, 2, 0.7);
+          -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+        }
+
+        .auth-dialog {
+          display: flex;
+          width: min(960px, 100%);
+          height: min(640px, 100%);
+          border-radius: 28px;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: linear-gradient(to bottom, #000000, #010603 83.41%);
+          box-shadow: 0 40px 120px rgba(0, 0, 0, 0.65);
+        }
+
+        .auth-side {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 28px;
+          width: 44%;
+          max-width: 560px;
+          min-height: 0;
+          background: #010603 url("./public/assets/background.jpg") top center /
+            cover no-repeat;
+          border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-side__ball {
+          width: 140.566px;
+          height: 140.566px;
+        }
+
+        .auth-side__wordmark {
+          width: 130px;
+          height: 33.17px;
+        }
+
+        .auth-main {
+          position: relative;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 0;
+        }
+
+        .auth-content {
+          padding-top: 0;
+        }
+
+        .auth-hero__ball {
+          display: none;
+        }
+
+        .auth-footer {
+          position: absolute;
+          bottom: 24px;
+        }
+      }
+
+      /* ============ RESPONSIVE: WIDE ≥1280 ============ */
+
+      @media (min-width: 1280px) {
+        .pcards {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HOME (Figma 1:171 logged out / 1:273 logged in) -->
+    <section class="screen screen--home" data-screen="home">
+      <div class="home-wrap">
+        <div class="home-top">
+          <header class="home-header">
+            <div class="home-brand" aria-hidden="true">
+              <img class="home-brand__ball" src="./public/assets/figma-icon-futbot.png" alt="" />
+              <img class="home-brand__wordmark" src="./public/assets/figma-wordmark.svg" alt="FutBots" />
+            </div>
+            <button class="pill" id="account-pill">
+              <img src="./public/assets/figma-icon-user.svg" alt="" />
+              <span id="account-pill-label">Login</span>
+            </button>
+          </header>
+
+          <div class="calendar">
+            <div class="calendar__month">
+              <button class="cal-nav cal-nav--prev" id="cal-prev" aria-label="Previous week">
+                <img src="./public/assets/figma-chevron-a.svg" alt="" />
+              </button>
+              <span id="cal-month">July 2026</span>
+              <button class="cal-nav" id="cal-next" aria-label="Next week">
+                <img src="./public/assets/figma-chevron-b.svg" alt="" />
+              </button>
+            </div>
+            <div class="calendar__days" id="cal-days"></div>
+          </div>
+
+          <div class="filters">
+            <div class="filter" id="filter-data">
+              <span>Data</span>
+              <button class="filter__control g-stroke" id="dp-toggle">
+                <span id="filter-date">Jul 25, 2026</span>
+                <img src="./public/assets/figma-chevron-down.svg" alt="" />
+              </button>
+              <div class="dd-panel dp-panel g-stroke" id="dp-panel">
+                <div class="dp-head">
+                  <button class="cal-nav cal-nav--prev" id="dp-prev" aria-label="Previous month">
+                    <img src="./public/assets/figma-chevron-a.svg" alt="" />
+                  </button>
+                  <span id="dp-month">July 2026</span>
+                  <button class="cal-nav" id="dp-next" aria-label="Next month">
+                    <img src="./public/assets/figma-chevron-b.svg" alt="" />
+                  </button>
+                </div>
+                <div class="dp-grid" id="dp-grid"></div>
+              </div>
+            </div>
+            <div class="filter" id="filter-match">
+              <span>Match type</span>
+              <button class="filter__control g-stroke" id="dd-toggle">
+                <span id="filter-type">All Competitions</span>
+                <img src="./public/assets/figma-chevron-down.svg" alt="" />
+              </button>
+              <div class="dd-panel g-stroke" id="dd-panel">
+                <button class="dd-item">All Competitions</button>
+                <button class="dd-item">FIFA World Cup</button>
+                <button class="dd-item">Chinese Super League</button>
+                <button class="dd-item">China League One</button>
+                <button class="dd-item">China League Two</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-body">
+          <!-- Free Score Day — visible after login (Figma 1:322) -->
+          <article class="fsd" id="fsd-card">
+            <div class="fsd__bg" aria-hidden="true">
+              <img src="./public/assets/figma-stadium.jpg" alt="" />
+            </div>
+            <div class="fsd__title">
+              <img src="./public/assets/figma-sparkle-white.svg" alt="" />
+              <h2>Free Score Day</h2>
+              <span class="fsd__free">FREE</span>
+            </div>
+            <div class="teams teams--light">
+              <div class="team">
+                <img id="fsd-home-flag" src="./public/assets/flags/pt.svg" alt="" />
+                <span id="fsd-home-name">Portugal</span>
+              </div>
+              <b>vs.</b>
+              <div class="team">
+                <img id="fsd-away-flag" src="./public/assets/flags/za.svg" alt="" />
+                <span id="fsd-away-name">South Africa</span>
+              </div>
+            </div>
+            <button class="glow-btn" id="fsd-btn">
+              <img src="./public/assets/figma-sparkle-black.svg" alt="" />
+              Try it for free
+            </button>
+          </article>
+
+          <div class="predictions">
+            <h2>Predictions</h2>
+            <div class="pcards" id="pcards"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAILS (Figma 1:477) -->
+    <section class="screen screen--details" data-screen="details" hidden>
+      <div class="details-wrap">
+        <header class="details-head">
+          <button class="icon-btn back-btn" data-go="home" aria-label="Go back">
+            <img src="./public/assets/figma-icon-back.svg" alt="" />
+          </button>
+          <h1 class="details-title" id="d-title">Portugal vs.&#10;South Africa</h1>
+          <img class="details-pitch" src="./public/assets/figma-pitch.svg" alt="" />
+        </header>
+
+        <div class="d-cards">
+          <!-- Score Predictions -->
+          <div class="d-card d-card--score g-stroke">
+            <img class="d-ball" style="left: 25px; top: 21px" src="./public/assets/figma-ball-section.svg" alt="" />
+            <p class="d-section" style="left: 55px; top: 22px">Score Predictions</p>
+            <div class="ai-badge" style="left: 313.5px; top: 19px">
+              <img src="./public/assets/figma-sparkle-badge.svg" alt="" />
+              <span>By FutBot AI</span>
+            </div>
+            <div class="d-line-h" style="left: 19px; top: 55px"></div>
+
+            <img class="d-flag js-d-home-flag" style="left: 39px; top: 77px" src="./public/assets/flags/pt.svg" alt="" />
+            <img class="d-flag js-d-away-flag" style="left: 303px; top: 77px" src="./public/assets/flags/za.svg" alt="" />
+            <p class="d-score" style="left: 184px; top: 79px">1:0</p>
+            <p class="d-label d-label--c js-d-home-name" style="left: 50px; top: 101px">Portugal</p>
+            <p class="d-label d-label--c js-d-away-name" style="left: 314px; top: 101px">South Africa</p>
+
+            <img class="d-flag js-d-home-flag" style="left: 39px; top: 140px" src="./public/assets/flags/pt.svg" alt="" />
+            <img class="d-flag js-d-away-flag" style="left: 303px; top: 140px" src="./public/assets/flags/za.svg" alt="" />
+            <p class="d-score" style="left: 184px; top: 147px">0:1</p>
+            <p class="d-label d-label--c js-d-home-name" style="left: 50px; top: 164px">Portugal</p>
+            <p class="d-label d-label--c js-d-away-name" style="left: 314px; top: 164px">South Africa</p>
+
+            <img class="d-flag js-d-home-flag" style="left: 39px; top: 204px" src="./public/assets/flags/pt.svg" alt="" />
+            <img class="d-flag js-d-away-flag" style="left: 303px; top: 204px" src="./public/assets/flags/za.svg" alt="" />
+            <p class="d-score" style="left: 184.5px; top: 207px">0:0</p>
+            <p class="d-label d-label--c js-d-home-name" style="left: 50px; top: 228px">Portugal</p>
+            <p class="d-label d-label--c js-d-away-name" style="left: 314px; top: 228px">South Africa</p>
+
+            <img class="d-flag js-d-home-flag" style="left: 39px; top: 271px" src="./public/assets/flags/pt.svg" alt="" />
+            <img class="d-flag js-d-away-flag" style="left: 303px; top: 271px" src="./public/assets/flags/za.svg" alt="" />
+            <p class="d-score" style="left: 184.5px; top: 272px">1:1</p>
+            <p class="d-label d-label--c js-d-home-name" style="left: 50px; top: 295px">Portugal</p>
+            <p class="d-label d-label--c js-d-away-name" style="left: 314px; top: 295px">South Africa</p>
+          </div>
+
+          <!-- Total -->
+          <div class="d-card d-card--total g-stroke">
+            <img class="d-ball" style="left: 25px; top: 22px" src="./public/assets/figma-ball-section.svg" alt="" />
+            <p class="d-section" style="left: 55px; top: 23px">Total</p>
+            <div class="ai-badge" style="left: 313.5px; top: 20px">
+              <img src="./public/assets/figma-sparkle-badge.svg" alt="" />
+              <span>By FutBot AI</span>
+            </div>
+            <div class="d-line-h" style="left: 19px; top: 59px"></div>
+            <div class="d-line-v" style="left: 256px; top: 90px"></div>
+            <p class="d-num" style="left: 25px; top: 90px">#1</p>
+            <p class="d-pick" style="left: 25px; top: 106px">Under 2 / 2.5 Goals</p>
+            <p class="d-num" style="left: 25px; top: 153px">#2</p>
+            <p class="d-pick" style="left: 25px; top: 169px">Under 2.5 Goals</p>
+            <img class="d-flag js-d-away-flag" style="left: 303px; top: 90px" src="./public/assets/flags/za.svg" alt="" />
+            <p class="d-label d-label--c js-d-away-name" style="left: 314px; top: 114px">South Africa</p>
+            <img class="d-flag js-d-home-flag" style="left: 303px; top: 160px" src="./public/assets/flags/pt.svg" alt="" />
+            <p class="d-label d-label--c js-d-home-name" style="left: 314px; top: 184px">Portugal</p>
+          </div>
+
+          <!-- Asian handicap -->
+          <div class="d-card d-card--handicap g-stroke">
+            <img class="d-ball" style="left: 25px; top: 22px" src="./public/assets/figma-ball-section.svg" alt="" />
+            <p class="d-section" style="left: 55px; top: 23px">Asian handicap</p>
+            <div class="ai-badge" style="left: 313.5px; top: 20px">
+              <img src="./public/assets/figma-sparkle-badge.svg" alt="" />
+              <span>By FutBot AI</span>
+            </div>
+            <div class="d-line-h" style="left: 19px; top: 59px"></div>
+            <div class="d-line-v" style="left: 256px; top: 89px"></div>
+            <p class="d-pick" id="d-handicap" style="left: 25px; top: 127px">Portugal +0.25</p>
+            <img class="d-flag js-d-away-flag" style="left: 303px; top: 90px" src="./public/assets/flags/za.svg" alt="" />
+            <p class="d-label d-label--c js-d-away-name" style="left: 314px; top: 114px">South Africa</p>
+            <img class="d-flag js-d-home-flag" style="left: 303px; top: 160px" src="./public/assets/flags/pt.svg" alt="" />
+            <p class="d-label d-label--c js-d-home-name" style="left: 314px; top: 184px">Portugal</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE (Figma 1:393) -->
+    <section class="screen screen--profile" data-screen="profile" hidden>
+      <div class="profile-wrap">
+        <header class="profile-head">
+          <button class="icon-btn back-btn" data-go="home" aria-label="Go back">
+            <img src="./public/assets/figma-icon-back.svg" alt="" />
+          </button>
+          <h1 class="profile-title">Profile</h1>
+        </header>
+
+        <article class="plan-card">
+          <div class="plan-card__head">
+            <div class="plan-card__titles">
+              <p class="plan-card__eyebrow">Current Plan</p>
+              <p class="plan-card__name" id="plan-name">Free Trial</p>
+            </div>
+            <div class="plan-menu" id="plan-menu" hidden>
+              <button class="plan-card__menu" id="plan-menu-btn" aria-label="Plan options">
+                <span class="menu-dots">
+                  <img src="./public/assets/more-left.svg" alt="" />
+                  <img src="./public/assets/more-middle.svg" alt="" />
+                  <img src="./public/assets/more-right.svg" alt="" />
+                </span>
+              </button>
+              <div class="dd-panel plan-menu-panel">
+                <button class="dd-item" id="plan-update">Update Your Plan</button>
+                <button class="dd-item dd-item--danger" id="plan-cancel">Cancel Your Plan</button>
+              </div>
+            </div>
+          </div>
+          <p class="plan-card__desc" id="plan-desc">
+            Display only the AI&rsquo;s pre-match analysis and conclusion for
+            &ldquo;Guardians&rdquo;
+          </p>
+          <button class="glow-btn plan-card__cta" id="plan-cta" data-go="plans">
+            <img src="./public/assets/figma-sparkle-black.svg" alt="" />
+            Choose Your Plan
+          </button>
+        </article>
+
+        <div class="account-card">
+          <div class="account-card__id">
+            <img src="./public/assets/figma-icon-user.svg" alt="" />
+            <span id="account-email">futbots@gmail.com</span>
+          </div>
+          <button class="logout-btn" id="logout-btn">Log Out</button>
+        </div>
+
+        <div class="predictions profile-predictions">
+          <h2>My Predictions</h2>
+          <div class="pcards pcards--profile" id="profile-cards"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANS (Figma 1:617) -->
+    <section class="screen screen--plans" data-screen="plans" hidden>
+      <div class="plans-wrap">
+        <header class="plans-head">
+          <button class="icon-btn back-btn" id="plans-close" aria-label="Go back">
+            <img src="./public/assets/figma-icon-back.svg" alt="" />
+          </button>
+        </header>
+
+        <div class="plan-options" id="plan-options">
+          <div class="plan-option plan-option--current" data-plan="free">
+            <div class="plan-option__head">
+              <div class="plan-option__titles">
+                <p class="plan-option__label">Free Trail</p>
+                <p class="plan-option__price">Free</p>
+              </div>
+            </div>
+            <p class="plan-option__desc">
+              Display only the AI&rsquo;s pre-match analysis and conclusion for
+              &ldquo;Guardians&rdquo;
+            </p>
+          </div>
+
+          <button
+            class="plan-option"
+            data-plan="weekend"
+            data-name="Weekend Pass"
+            data-price="2.99"
+            data-desc="AI expert analysis for all matches in the next 24 hours"
+          >
+            <div class="plan-option__head">
+              <div class="plan-option__titles">
+                <p class="plan-option__label">Weekend Pass</p>
+                <p class="plan-option__price">2.99 USDT</p>
+              </div>
+              <span class="duration-pill">
+                <img src="./public/assets/time-muted.svg" alt="" />
+                24 Hour
+              </span>
+            </div>
+            <p class="plan-option__desc">
+              AI expert analysis for all matches in the next 24 hours
+            </p>
+          </button>
+
+          <button
+            class="plan-option"
+            data-plan="monthly-7"
+            data-name="Monthly Pass"
+            data-price="11.99"
+            data-desc="AI expert analysis for all matches in the next 7 days"
+          >
+            <div class="plan-option__head">
+              <div class="plan-option__titles">
+                <p class="plan-option__label">Monthly Pass</p>
+                <p class="plan-option__price">11.99 USDT</p>
+              </div>
+              <span class="duration-pill">
+                <img src="./public/assets/time-muted.svg" alt="" />
+                1 Month
+              </span>
+            </div>
+            <p class="plan-option__desc">
+              AI expert analysis for all matches in the next 7 days
+            </p>
+          </button>
+
+          <button
+            class="plan-option plan-option--tall"
+            data-plan="monthly-30"
+            data-name="Monthly Pass"
+            data-price="29.99"
+            data-desc="AI expert analysis for all matches in the next 30 days"
+          >
+            <div class="plan-option__head">
+              <div class="plan-option__titles">
+                <p class="plan-option__flag">Recommended</p>
+                <p class="plan-option__label">Monthly Pass</p>
+                <p class="plan-option__price">29.99 USDT</p>
+              </div>
+              <span class="duration-pill duration-pill--light">
+                <img src="./public/assets/time-active.svg" alt="" />
+                1 Month
+              </span>
+            </div>
+            <p class="plan-option__desc">
+              AI expert analysis for all matches in the next 30 days
+            </p>
+          </button>
+
+          <button
+            class="plan-option plan-option--taller"
+            data-plan="max"
+            data-name="MAX"
+            data-price="49.99"
+            data-desc="Multiple AI models collaborate: In addition to the top-performing Ai model, 5-8 other AI models join the discussions. Results are aggregated and a voting distribution chart is provided for reference"
+          >
+            <div class="plan-option__head">
+              <div class="plan-option__titles">
+                <p class="plan-option__label">MAX</p>
+                <p class="plan-option__price">49.99 USDT</p>
+              </div>
+              <span class="duration-pill">
+                <img src="./public/assets/time-muted.svg" alt="" />
+                1 Month
+              </span>
+            </div>
+            <p class="plan-option__desc">
+              Multiple AI models collaborate: In addition to the top-performing
+              Ai model, 5-8 other AI models join the discussions. Results are
+              aggregated and a voting distribution chart is provided for
+              reference
+            </p>
+          </button>
+        </div>
+
+        <div class="plans-footer">
+          <button class="pay-btn" id="pay-btn">Pay now (11.99 USDT)</button>
+          <p class="pay-note" id="pay-note">11.99 USDT/m, until Cancelled</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Not Sure? Bot It — social auth (Figma 1:664) -->
+    <section class="screen screen--flags" data-screen="auth" hidden>
+      <div class="auth-dialog">
+      <aside class="auth-side" aria-hidden="true">
+        <img class="auth-side__ball" src="./public/assets/figma-logo-ball.svg" alt="" />
+        <img class="auth-side__wordmark" src="./public/assets/figma-wordmark.svg" alt="" />
+      </aside>
+      <div class="auth-main">
+        <div class="auth-content">
+          <div class="auth-hero">
+            <img class="auth-hero__ball" src="./public/assets/figma-logo-ball.svg" alt="" />
+            <h1>Not Sure? Bot It</h1>
+          </div>
+          <div class="auth-actions">
+            <button class="social-button" data-go="login">
+              <span class="social-button__icon social-button__icon--futbot">
+                <img src="./public/assets/figma-icon-futbot.png" alt="" />
+              </span>
+              Login with FutBot account
+            </button>
+            <button class="social-button" data-login>
+              <span class="social-button__icon">
+                <img src="./public/assets/figma-icon-google.svg" alt="" />
+              </span>
+              Continue with Google
+            </button>
+            <button class="social-button" data-login>
+              <span class="social-button__icon">
+                <img src="./public/assets/figma-icon-telegram.svg" alt="" />
+              </span>
+              Continue with Telegram
+            </button>
+          </div>
+        </div>
+        <footer class="auth-footer">
+          <img class="auth-footer__wordmark" src="./public/assets/figma-wordmark.svg" alt="FutBots" />
+          <p class="auth-footer__disclaimer">
+            By continuing, you acknowledge that the predictions are provided for
+            informational purposes only and will not be used to place bets
+            automatically.
+          </p>
+        </footer>
+      </div>
+      </div>
+    </section>
+
+    <!-- Email / password login (Figma 1:849) -->
+    <section class="screen screen--flags" data-screen="login" hidden>
+      <div class="auth-dialog">
+      <aside class="auth-side" aria-hidden="true">
+        <img class="auth-side__ball" src="./public/assets/figma-logo-ball.svg" alt="" />
+        <img class="auth-side__wordmark" src="./public/assets/figma-wordmark.svg" alt="" />
+      </aside>
+      <div class="auth-main">
+        <form class="auth-content" data-login-form>
+          <div class="auth-hero">
+            <img class="auth-hero__ball" src="./public/assets/figma-logo-ball.svg" alt="" />
+            <h1>Not Sure? Bot It</h1>
+          </div>
+          <div class="auth-actions">
+            <input class="field" type="email" placeholder="Email" autocomplete="email" required />
+            <input
+              class="field"
+              type="password"
+              placeholder="Password"
+              autocomplete="current-password"
+              required
+            />
+            <button class="primary-button" type="submit">Login</button>
+            <button class="text-link" type="button" data-go="signup">Create account</button>
+          </div>
+        </form>
+        <footer class="auth-footer">
+          <img class="auth-footer__wordmark" src="./public/assets/figma-wordmark.svg" alt="FutBots" />
+          <p class="auth-footer__disclaimer">
+            By continuing, you acknowledge that the predictions are provided for
+            informational purposes only and will not be used to place bets
+            automatically.
+          </p>
+        </footer>
+      </div>
+      </div>
+    </section>
+
+    <!-- Create account (Figma 1:549) -->
+    <section class="screen screen--plain" data-screen="signup" hidden>
+      <div class="auth-dialog">
+      <aside class="auth-side" aria-hidden="true">
+        <img class="auth-side__ball" src="./public/assets/figma-logo-ball.svg" alt="" />
+        <img class="auth-side__wordmark" src="./public/assets/figma-wordmark.svg" alt="" />
+      </aside>
+      <div class="auth-main">
+        <form class="auth-content" data-login-form>
+          <div class="auth-hero">
+            <h1 class="auth-title">Create account</h1>
+          </div>
+          <div class="auth-actions">
+            <input class="field" type="email" placeholder="Email" autocomplete="email" required />
+            <input
+              class="field"
+              type="password"
+              placeholder="Password"
+              autocomplete="new-password"
+              required
+            />
+            <input
+              class="field"
+              type="password"
+              placeholder="Confirm Password"
+              autocomplete="new-password"
+              required
+            />
+            <button class="primary-button" type="submit">Create</button>
+            <button class="text-link" type="button" data-go="login">Login</button>
+          </div>
+        </form>
+        <footer class="auth-footer">
+          <div class="auth-footer__brand">
+            <img class="auth-footer__ball" src="./public/assets/figma-icon-futbot.png" alt="" />
+            <img class="auth-footer__wordmark" src="./public/assets/figma-wordmark.svg" alt="FutBots" />
+          </div>
+          <p class="auth-footer__disclaimer">
+            By continuing, you acknowledge that the predictions are provided for
+            informational purposes only and will not be used to place bets
+            automatically.
+          </p>
+        </footer>
+      </div>
+      </div>
+    </section>
+
+    <!-- Free prediction modal (Figma 1:830) -->
+    <div class="modal" id="modal" hidden>
+      <div class="modal__overlay" data-close-modal></div>
+      <section class="modal__sheet" role="dialog" aria-modal="true" aria-label="Free prediction">
+        <div class="modal__head">
+          <h2>You Have 1 Free Prediction Left</h2>
+          <div class="ai-badge">
+            <img src="./public/assets/figma-sparkle-badge.svg" alt="" />
+            <span>By FutBot AI</span>
+          </div>
+        </div>
+        <div class="teams modal__teams">
+          <div class="team">
+            <img id="m-home-flag" src="./public/assets/flags/pt.svg" alt="" />
+            <span id="m-home-name">Portugal</span>
+          </div>
+          <b>vs.</b>
+          <div class="team">
+            <img id="m-away-flag" src="./public/assets/flags/za.svg" alt="" />
+            <span id="m-away-name">South Africa</span>
+          </div>
+        </div>
+        <div class="modal__note">
+          <p>By clicking &ldquo;Confirm,&rdquo; you&rsquo;ll receive predictions for:</p>
+          <ul>
+            <li>Score Predictions</li>
+            <li>Over/Under</li>
+            <li>Asian handicap</li>
+          </ul>
+          <p>Your free prediction will reset tomorrow.</p>
+        </div>
+        <button class="glow-btn modal__cta" id="modal-confirm">Start Now</button>
+      </section>
+    </div>
+
+    <script>
+      const screens = document.querySelectorAll("[data-screen]");
+      const state = { loggedIn: false, plan: null, email: null };
+
+      /* auth + plans are floating windows: they open above the current
+         screen instead of replacing it */
+      const MODAL_SCREENS = ["auth", "login", "signup", "plans"];
+
+      function show(target) {
+        if (MODAL_SCREENS.includes(target)) {
+          if (target === "plans") renderPlansPage();
+          screens.forEach((s) => {
+            if (MODAL_SCREENS.includes(s.dataset.screen)) {
+              s.hidden = s.dataset.screen !== target;
+            }
+          });
+          return;
+        }
+        screens.forEach((s) => {
+          s.hidden = s.dataset.screen !== target;
+        });
+        window.scrollTo(0, 0);
+      }
+
+      document.querySelectorAll("[data-go]").forEach((el) => {
+        el.addEventListener("click", () => show(el.dataset.go));
+      });
+
+      /* clicking the dimmed backdrop closes a floating window (desktop) */
+      const modalSections = [...screens].filter((s) =>
+        MODAL_SCREENS.includes(s.dataset.screen)
+      );
+
+      function closeModalScreens() {
+        modalSections.forEach((s) => (s.hidden = true));
+      }
+
+      modalSections.forEach((sec) => {
+        sec.addEventListener("click", (e) => {
+          if (e.target === sec && window.innerWidth >= 1024) sec.hidden = true;
+        });
+      });
+
+      /* ---- auth flow ---- */
+      const pillLabel = document.getElementById("account-pill-label");
+      const fsdCard = document.getElementById("fsd-card");
+
+      function applyAuthState() {
+        pillLabel.textContent = state.loggedIn ? "Free Trial" : "Login";
+      }
+
+      document.getElementById("account-pill").addEventListener("click", () => {
+        if (!state.loggedIn) {
+          show("auth");
+        } else {
+          renderProfile();
+          show("profile");
+        }
+      });
+
+      function login(email) {
+        state.loggedIn = true;
+        state.email = email || "futbots@gmail.com";
+        applyAuthState();
+        show("home");
+      }
+
+      document.querySelectorAll("[data-login]").forEach((el) => {
+        el.addEventListener("click", () => login());
+      });
+
+      document.querySelectorAll("[data-login-form]").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const emailInput = form.querySelector('input[type="email"]');
+          login(emailInput && emailInput.value);
+        });
+      });
+
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        state.loggedIn = false;
+        state.plan = null;
+        state.email = null;
+        applyAuthState();
+        show("home");
+      });
+
+      /* ---- countries (flags from hampusborgos/country-flags) ---- */
+      const COUNTRIES = [
+        ["br", "Brazil"], ["ar", "Argentina"], ["fr", "France"], ["de", "Germany"],
+        ["es", "Spain"], ["pt", "Portugal"], ["nl", "Netherlands"], ["it", "Italy"],
+        ["be", "Belgium"], ["hr", "Croatia"], ["ma", "Morocco"], ["jp", "Japan"],
+        ["kr", "South Korea"], ["us", "USA"], ["mx", "Mexico"], ["ca", "Canada"],
+        ["au", "Australia"], ["za", "South Africa"], ["co", "Colombia"], ["uy", "Uruguay"],
+        ["qa", "Qatar"], ["sa", "Saudi Arabia"], ["gh", "Ghana"], ["sn", "Senegal"],
+        ["ng", "Nigeria"], ["cm", "Cameroon"], ["eg", "Egypt"], ["dz", "Algeria"],
+        ["tn", "Tunisia"], ["ci", "Ivory Coast"], ["dk", "Denmark"], ["se", "Sweden"],
+        ["no", "Norway"], ["ch", "Switzerland"], ["pl", "Poland"], ["rs", "Serbia"],
+        ["ua", "Ukraine"], ["tr", "Turkey"], ["gr", "Greece"], ["cz", "Czechia"],
+        ["ec", "Ecuador"], ["pe", "Peru"], ["cl", "Chile"], ["py", "Paraguay"],
+        ["ve", "Venezuela"], ["cr", "Costa Rica"], ["is", "Iceland"], ["ie", "Ireland"],
+        ["at", "Austria"], ["hu", "Hungary"], ["ro", "Romania"], ["bg", "Bulgaria"],
+        ["sk", "Slovakia"], ["si", "Slovenia"], ["fi", "Finland"], ["gb-eng", "England"],
+        ["gb-sct", "Scotland"], ["gb-wls", "Wales"],
+      ];
+      const flagSrc = (code) => `./public/assets/flags/${code}.svg`;
+
+      /* ---- seeded match generator: every day has matches ---- */
+      function mulberry32(a) {
+        return function () {
+          a |= 0;
+          a = (a + 0x6d2b79f5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      const MONTHS_S = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const MONTHS_L = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const DAY_LETTERS = ["S", "M", "T", "W", "T", "F", "S"];
+      const fmtDate = (d) => `${MONTHS_S[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+
+      function matchesFor(d) {
+        const rng = mulberry32(d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate());
+        const count = 4 + Math.floor(rng() * 3);
+        const used = new Set();
+        const pick = () => {
+          let i;
+          do {
+            i = Math.floor(rng() * COUNTRIES.length);
+          } while (used.has(i));
+          used.add(i);
+          return COUNTRIES[i];
+        };
+        const list = [];
+        for (let i = 0; i < count; i++) {
+          const hour = 12 + Math.floor(rng() * 9);
+          const min = [0, 15, 30, 45][Math.floor(rng() * 4)];
+          const status = i === 0 ? "idle" : i === count - 1 ? "done" : rng() < 0.5 ? "idle" : "done";
+          list.push({
+            home: pick(),
+            away: pick(),
+            time: `${String(hour).padStart(2, "0")}:${String(min).padStart(2, "0")}`,
+            status,
+            soon: `${1 + Math.floor(rng() * 23)}h ${Math.floor(rng() * 60)}m`,
+          });
+        }
+        list.sort((a, b) => (a.status === "idle" ? 0 : 1) - (b.status === "idle" ? 0 : 1));
+        return list;
+      }
+
+      /* ---- card templates ---- */
+      const teamHTML = (t) =>
+        `<div class="team"><img src="${flagSrc(t[0])}" alt=""><span>${t[1]}</span></div>`;
+      const teamsRowHTML = (m) =>
+        `<div class="teams">${teamHTML(m.home)}<b>vs.</b>${teamHTML(m.away)}</div>`;
+
+      const idleHTML = (m, dstr) => `
+        <div class="pcard__head">
+          <span class="pcard__date">${dstr} | ${m.time}</span>
+          <span class="badge badge--soon">
+            <img src="./public/assets/figma-icon-clock.svg" alt="" />
+            Starting in: ${m.soon}
+          </span>
+        </div>
+        ${teamsRowHTML(m)}
+        <button class="glow-btn" data-analyze>
+          <img src="./public/assets/figma-sparkle-black.svg" alt="" />
+          Start Free Analyze
+        </button>`;
+
+      const analyzingHTML = (m, dstr) => `
+        <div class="pcard__head">
+          <span class="pcard__date">${dstr} | ${m.time}</span>
+          <span class="badge badge--soon">
+            <img src="./public/assets/figma-icon-clock.svg" alt="" />
+            Starting in: ${m.soon}
+          </span>
+        </div>
+        ${teamsRowHTML(m)}
+        <div class="analyzing">
+          <img src="./public/assets/figma-spinner.svg" alt="" />
+          <span>Analyzing...</span>
+        </div>`;
+
+      const doneHTML = (m, dstr) => `
+        <span class="pcard__date">${dstr} | ${m.time}</span>
+        <div class="pcard__result">
+          <div class="stacked-teams">
+            <div><img src="${flagSrc(m.home[0])}" alt=""><span>${m.home[1]}</span></div>
+            <div><img src="${flagSrc(m.away[0])}" alt=""><span>${m.away[1]}</span></div>
+          </div>
+          <button class="see-link" data-see>
+            See Predictions
+            <img src="./public/assets/figma-arrow-sm.svg" alt="" />
+          </button>
+        </div>`;
+
+      /* ---- render matches for selected day ---- */
+      const pcardsEl = document.getElementById("pcards");
+      let selectedDate = new Date(2026, 6, 25);
+      let pending = null;
+
+      function swapIn(el) {
+        el.classList.remove("state-swap");
+        void el.offsetWidth;
+        el.classList.add("state-swap");
+      }
+
+      function wireCard(el, m, dstr) {
+        const analyzeBtn = el.querySelector("[data-analyze]");
+        if (analyzeBtn) {
+          analyzeBtn.addEventListener("click", () => {
+            if (!state.loggedIn) {
+              show("auth");
+              return;
+            }
+            pending = { el, m, dstr };
+            setModalMatch(m);
+            openModal();
+          });
+        }
+        const seeLink = el.querySelector("[data-see]");
+        if (seeLink) {
+          seeLink.addEventListener("click", () => openDetails(m));
+        }
+      }
+
+      function renderMatches() {
+        const matches = matchesFor(selectedDate);
+        const dstr = fmtDate(selectedDate);
+        pcardsEl.innerHTML = "";
+        matches.forEach((m) => {
+          const el = document.createElement("article");
+          el.className = "pcard" + (m.status === "done" ? " pcard--done" : "");
+          el.innerHTML = m.status === "done" ? doneHTML(m, dstr) : idleHTML(m, dstr);
+          wireCard(el, m, dstr);
+          pcardsEl.appendChild(el);
+        });
+        updateFSD(matches);
+        return matches;
+      }
+
+      /* ---- Free Score Day featured match ---- */
+      function updateFSD(matches) {
+        const feat = matches.find((m) => m.status === "idle") || matches[0];
+        fsdCard.dataset.featured = "1";
+        document.getElementById("fsd-home-flag").src = flagSrc(feat.home[0]);
+        document.getElementById("fsd-home-name").textContent = feat.home[1];
+        document.getElementById("fsd-away-flag").src = flagSrc(feat.away[0]);
+        document.getElementById("fsd-away-name").textContent = feat.away[1];
+        fsdCard.dataset.matchIndex = "";
+        fsdFeatured = feat;
+      }
+      let fsdFeatured = null;
+
+      document.getElementById("fsd-btn").addEventListener("click", () => {
+        if (!state.loggedIn) {
+          show("auth");
+          return;
+        }
+        const el = [...pcardsEl.children].find((c) => c.querySelector("[data-analyze]"));
+        if (fsdFeatured && el) {
+          pending = { el, m: fsdFeatured, dstr: fmtDate(selectedDate) };
+          setModalMatch(fsdFeatured);
+        }
+        openModal();
+      });
+
+      /* ---- scrollable calendar ---- */
+      const strip = document.getElementById("cal-days");
+      const monthLabel = document.getElementById("cal-month");
+      const filterDate = document.getElementById("filter-date");
+      const CAL_START = new Date(2026, 6, 1);
+      const CAL_END = new Date(2026, 7, 31);
+
+      function buildCalendar() {
+        for (let d = new Date(CAL_START); d <= CAL_END; d.setDate(d.getDate() + 1)) {
+          const day = new Date(d);
+          const btn = document.createElement("button");
+          btn.className = "day";
+          btn.innerHTML = `<span>${DAY_LETTERS[day.getDay()]}</span><b>${day.getDate()}</b>`;
+          btn.addEventListener("click", () => {
+            if (strip.dataset.dragged === "1") return;
+            selectDate(day, true);
+          });
+          btn.dataset.iso = day.toISOString().slice(0, 10);
+          strip.appendChild(btn);
+        }
+      }
+
+      function centerDay(el, smooth) {
+        const left =
+          el.getBoundingClientRect().left -
+          strip.getBoundingClientRect().left +
+          strip.scrollLeft;
+        strip.scrollTo({
+          left: left - strip.clientWidth / 2 + el.offsetWidth / 2,
+          behavior: smooth ? "smooth" : "auto",
+        });
+      }
+
+      function selectDate(day, smooth) {
+        selectedDate = new Date(day);
+        const iso = selectedDate.toISOString().slice(0, 10);
+        strip.querySelectorAll(".day").forEach((el) => {
+          el.classList.toggle("day--active", el.dataset.iso === iso);
+        });
+        monthLabel.textContent = `${MONTHS_L[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
+        filterDate.textContent = fmtDate(selectedDate);
+        const active = strip.querySelector(".day--active");
+        if (active) centerDay(active, smooth);
+        dpMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+        buildPicker();
+        renderMatches();
+      }
+
+      document.getElementById("cal-prev").addEventListener("click", () => {
+        strip.scrollBy({ left: -strip.clientWidth, behavior: "smooth" });
+      });
+      document.getElementById("cal-next").addEventListener("click", () => {
+        strip.scrollBy({ left: strip.clientWidth, behavior: "smooth" });
+      });
+
+      /* drag-to-scroll (mouse) */
+      let dragStartX = 0;
+      let dragStartScroll = 0;
+      let isDown = false;
+      strip.addEventListener("pointerdown", (e) => {
+        isDown = true;
+        dragStartX = e.clientX;
+        dragStartScroll = strip.scrollLeft;
+        strip.dataset.dragged = "0";
+      });
+      window.addEventListener("pointermove", (e) => {
+        if (!isDown) return;
+        const dx = e.clientX - dragStartX;
+        if (Math.abs(dx) > 5) {
+          strip.dataset.dragged = "1";
+          strip.classList.add("is-dragging");
+          strip.scrollLeft = dragStartScroll - dx;
+        }
+      });
+      window.addEventListener("pointerup", () => {
+        isDown = false;
+        strip.classList.remove("is-dragging");
+        setTimeout(() => (strip.dataset.dragged = "0"), 0);
+      });
+
+      /* ---- filter dropdowns ---- */
+      const filterData = document.getElementById("filter-data");
+      const filterMatch = document.getElementById("filter-match");
+
+      function closePanels(except) {
+        [filterData, filterMatch].forEach((f) => {
+          if (f !== except) f.classList.remove("is-open");
+        });
+      }
+
+      document.getElementById("dd-toggle").addEventListener("click", () => {
+        closePanels(filterMatch);
+        filterMatch.classList.toggle("is-open");
+      });
+
+      document.getElementById("dp-toggle").addEventListener("click", () => {
+        closePanels(filterData);
+        filterData.classList.toggle("is-open");
+      });
+
+      document.querySelectorAll("#dd-panel .dd-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          document.getElementById("filter-type").textContent = item.textContent;
+          closePanels();
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".filter")) closePanels();
+        if (!e.target.closest(".plan-menu")) closePlanMenu();
+      });
+
+      /* ---- date picker (design-system styled) ---- */
+      const dpGrid = document.getElementById("dp-grid");
+      const dpMonthEl = document.getElementById("dp-month");
+      const dpPrev = document.getElementById("dp-prev");
+      const dpNext = document.getElementById("dp-next");
+      let dpMonth = new Date(2026, 6, 1);
+
+      const sameDay = (a, b) =>
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate();
+
+      function buildPicker() {
+        dpMonthEl.textContent = `${MONTHS_L[dpMonth.getMonth()]} ${dpMonth.getFullYear()}`;
+        dpGrid.innerHTML = "";
+        DAY_LETTERS.forEach((l) => {
+          const el = document.createElement("span");
+          el.className = "dp-dow";
+          el.textContent = l;
+          dpGrid.appendChild(el);
+        });
+        const pad = new Date(dpMonth.getFullYear(), dpMonth.getMonth(), 1).getDay();
+        for (let i = 0; i < pad; i++) dpGrid.appendChild(document.createElement("span"));
+        const daysInMonth = new Date(dpMonth.getFullYear(), dpMonth.getMonth() + 1, 0).getDate();
+        for (let d = 1; d <= daysInMonth; d++) {
+          const date = new Date(dpMonth.getFullYear(), dpMonth.getMonth(), d);
+          const btn = document.createElement("button");
+          btn.className = "dp-day";
+          btn.textContent = d;
+          if (sameDay(date, selectedDate)) btn.classList.add("is-selected");
+          if (date < CAL_START || date > CAL_END) btn.disabled = true;
+          btn.addEventListener("click", () => {
+            selectDate(date, true);
+            closePanels();
+          });
+          dpGrid.appendChild(btn);
+        }
+        dpPrev.disabled =
+          dpMonth.getFullYear() === CAL_START.getFullYear() &&
+          dpMonth.getMonth() <= CAL_START.getMonth();
+        dpNext.disabled =
+          dpMonth.getFullYear() === CAL_END.getFullYear() &&
+          dpMonth.getMonth() >= CAL_END.getMonth();
+      }
+
+      dpPrev.addEventListener("click", () => {
+        dpMonth = new Date(dpMonth.getFullYear(), dpMonth.getMonth() - 1, 1);
+        buildPicker();
+      });
+      dpNext.addEventListener("click", () => {
+        dpMonth = new Date(dpMonth.getFullYear(), dpMonth.getMonth() + 1, 1);
+        buildPicker();
+      });
+
+      /* ---- modal ---- */
+      const modal = document.getElementById("modal");
+      const sheet = modal.querySelector(".modal__sheet");
+
+      function setModalMatch(m) {
+        document.getElementById("m-home-flag").src = flagSrc(m.home[0]);
+        document.getElementById("m-home-name").textContent = m.home[1];
+        document.getElementById("m-away-flag").src = flagSrc(m.away[0]);
+        document.getElementById("m-away-name").textContent = m.away[1];
+      }
+
+      function openModal() {
+        modal.hidden = false;
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => modal.classList.add("is-open"))
+        );
+      }
+
+      function closeModal() {
+        modal.classList.remove("is-open");
+        sheet.addEventListener(
+          "transitionend",
+          () => {
+            modal.hidden = true;
+          },
+          { once: true }
+        );
+      }
+
+      modal
+        .querySelector("[data-close-modal]")
+        .addEventListener("click", closeModal);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (!modal.hidden) closeModal();
+        closeModalScreens();
+        closePanels();
+        closePlanMenu();
+      });
+
+      /* ---- analyze flow: idle → analyzing → done ---- */
+      document.getElementById("modal-confirm").addEventListener("click", () => {
+        closeModal();
+        if (!pending) return;
+        const { el, m, dstr } = pending;
+        pending = null;
+        setTimeout(() => {
+          el.innerHTML = analyzingHTML(m, dstr);
+          el.classList.remove("pcard--done");
+          swapIn(el);
+        }, 250);
+        setTimeout(() => {
+          m.status = "done";
+          el.innerHTML = doneHTML(m, dstr);
+          el.classList.add("pcard--done");
+          swapIn(el);
+          wireCard(el, m, dstr);
+        }, 5000);
+      });
+
+      /* ---- details page (teams follow clicked match) ---- */
+      function openDetails(m) {
+        document.getElementById("d-title").textContent = `${m.home[1]} vs.\n${m.away[1]}`;
+        document.querySelectorAll(".js-d-home-flag").forEach((i) => (i.src = flagSrc(m.home[0])));
+        document.querySelectorAll(".js-d-away-flag").forEach((i) => (i.src = flagSrc(m.away[0])));
+        document.querySelectorAll(".js-d-home-name").forEach((e) => (e.textContent = m.home[1]));
+        document.querySelectorAll(".js-d-away-name").forEach((e) => (e.textContent = m.away[1]));
+        document.getElementById("d-handicap").textContent = `${m.home[1]} +0.25`;
+        show("details");
+      }
+
+      /* ---- profile page (Figma 1:393) ---- */
+      const profileCardsEl = document.getElementById("profile-cards");
+
+      const profileResultHTML = (m) => `
+        <div class="pcard__result">
+          <div class="stacked-teams">
+            <div><img src="${flagSrc(m.home[0])}" alt=""><span>${m.home[1]}</span></div>
+            <div><img src="${flagSrc(m.away[0])}" alt=""><span>${m.away[1]}</span></div>
+          </div>
+          <button class="see-link" data-see>
+            See Predictions
+            <img src="./public/assets/figma-arrow-sm.svg" alt="" />
+          </button>
+        </div>`;
+
+      function profileCardHTML(m, dstr, status) {
+        if (status === "upcoming") {
+          return `
+            <div class="pcard__head">
+              <span class="pcard__date">${dstr} | ${m.time}</span>
+              <span class="badge badge--soon">
+                <img src="./public/assets/figma-icon-clock.svg" alt="" />
+                Starting in: ${m.soon}
+              </span>
+            </div>
+            ${profileResultHTML(m)}`;
+        }
+        if (status === "live") {
+          return `
+            <div class="pcard__head">
+              <span class="pcard__date">${dstr} | ${m.time}</span>
+              <span class="badge badge--live">
+                <img src="./public/assets/figma-dot-live.svg" alt="" />
+                Live
+              </span>
+            </div>
+            ${profileResultHTML(m)}`;
+        }
+        return `
+          <span class="pcard__date">${dstr} | ${m.time}</span>
+          ${profileResultHTML(m)}`;
+      }
+
+      /* ---- current plan card: free trial vs paid plan ---- */
+      const FREE_PLAN_DESC =
+        "Display only the AI’s pre-match analysis and conclusion for “Guardians”";
+
+      function renderPlanCard() {
+        const nameEl = document.getElementById("plan-name");
+        const descEl = document.getElementById("plan-desc");
+        const ctaEl = document.getElementById("plan-cta");
+        const menuEl = document.getElementById("plan-menu");
+        if (state.plan) {
+          nameEl.textContent = state.plan.name;
+          descEl.textContent = state.plan.desc;
+          ctaEl.hidden = true;
+          menuEl.hidden = false;
+        } else {
+          nameEl.textContent = "Free Trial";
+          descEl.textContent = FREE_PLAN_DESC;
+          ctaEl.hidden = false;
+          menuEl.hidden = true;
+        }
+        document.getElementById("account-email").textContent =
+          state.email || "futbots@gmail.com";
+      }
+
+      /* ---- plan card menu: update / cancel ---- */
+      function closePlanMenu() {
+        document.getElementById("plan-menu").classList.remove("is-open");
+      }
+
+      document.getElementById("plan-menu-btn").addEventListener("click", () => {
+        document.getElementById("plan-menu").classList.toggle("is-open");
+      });
+
+      document.getElementById("plan-update").addEventListener("click", () => {
+        closePlanMenu();
+        show("plans");
+      });
+
+      document.getElementById("plan-cancel").addEventListener("click", () => {
+        closePlanMenu();
+        state.plan = null;
+        renderPlanCard();
+      });
+
+      /* ---- plan selection (Figma 1:617) ---- */
+      const payBtn = document.getElementById("pay-btn");
+      const payNote = document.getElementById("pay-note");
+      let selectedPlan = null;
+
+      function selectPlan(btn) {
+        document
+          .querySelectorAll(".plan-option.is-selected")
+          .forEach((b) => b.classList.remove("is-selected"));
+        btn.classList.add("is-selected");
+        selectedPlan = {
+          id: btn.dataset.plan,
+          name: btn.dataset.name,
+          price: btn.dataset.price,
+          desc: btn.dataset.desc,
+        };
+        payBtn.textContent = `Pay now (${selectedPlan.price} USDT)`;
+        payNote.textContent = `${selectedPlan.price} USDT/m, until Cancelled`;
+      }
+
+      /* marks the user's active plan and resets the default selection */
+      function renderPlansPage() {
+        document.querySelectorAll(".current-pill").forEach((p) => p.remove());
+        const currentId = state.plan ? state.plan.id : "free";
+        document.querySelectorAll(".plan-option").forEach((el) => {
+          el.classList.remove("is-selected");
+          const isCurrent = el.dataset.plan === currentId;
+          if (el.tagName === "BUTTON") el.disabled = isCurrent;
+          if (isCurrent) {
+            const pill = document.createElement("span");
+            pill.className = "current-pill";
+            pill.textContent = "Current Plan";
+            const head = el.querySelector(".plan-option__head");
+            head.insertBefore(pill, head.querySelector(".duration-pill"));
+          }
+        });
+        const prefer = currentId === "monthly-7" ? "monthly-30" : "monthly-7";
+        selectPlan(document.querySelector(`button.plan-option[data-plan="${prefer}"]`));
+      }
+
+      document.querySelectorAll("button.plan-option[data-plan]").forEach((btn) => {
+        btn.addEventListener("click", () => selectPlan(btn));
+      });
+
+      document
+        .getElementById("plans-close")
+        .addEventListener("click", closeModalScreens);
+
+      payBtn.addEventListener("click", () => {
+        state.plan = selectedPlan;
+        renderPlanCard();
+        show("profile");
+      });
+
+      function renderProfile() {
+        renderPlanCard();
+        const today = new Date(2026, 6, 25);
+        const todays = matchesFor(today);
+        const items = [
+          { m: todays[0], d: today, status: "upcoming" },
+          { m: todays[1] || todays[0], d: today, status: "live" },
+        ];
+        for (let i = 1; i <= 4; i++) {
+          const d = new Date(today);
+          d.setDate(d.getDate() - i);
+          items.push({ m: matchesFor(d)[0], d, status: "done" });
+        }
+        profileCardsEl.innerHTML = "";
+        items.forEach(({ m, d, status }) => {
+          const el = document.createElement("article");
+          el.className = "pcard pcard--done";
+          el.innerHTML = profileCardHTML(m, fmtDate(d), status);
+          el.querySelector("[data-see]").addEventListener("click", () => openDetails(m));
+          profileCardsEl.appendChild(el);
+        });
+      }
+
+      /* ---- init ---- */
+      buildCalendar();
+      selectDate(selectedDate, false);
+
+      /* ---- deep links for testing ---- */
+      const hash = location.hash.slice(1);
+      if (hash.includes("loggedin")) {
+        state.loggedIn = true;
+      }
+      applyAuthState();
+      const target = hash.replace("-loggedin", "").replace("loggedin", "");
+      if (["home", "auth", "login", "signup", "details", "profile", "plans"].includes(target)) {
+        if (target === "profile") renderProfile();
+        show(target);
+      }
+      if (hash.includes("dd")) filterMatch.classList.add("is-open");
+      if (hash.includes("dp")) filterData.classList.add("is-open");
+      if (hash.includes("modal")) {
+        state.loggedIn = true;
+        applyAuthState();
+        const firstIdle = [...pcardsEl.children].find((c) => c.querySelector("[data-analyze]"));
+        if (firstIdle && fsdFeatured) {
+          pending = { el: firstIdle, m: fsdFeatured, dstr: fmtDate(selectedDate) };
+          setModalMatch(fsdFeatured);
+        }
+        openModal();
+      }
+    </script>
+  </body>
+</html>

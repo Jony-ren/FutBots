@@ -1,0 +1,547 @@
+@font-face {
+  font-family: "Manrope";
+  src: url("./public/assets/fonts/manrope-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Red Hat Display";
+  src: url("./public/assets/fonts/red-hat-display-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+}
+
+:root {
+  --font-manrope: "Manrope", Arial, Helvetica, sans-serif;
+  --font-red-hat: "Red Hat Display", Arial, Helvetica, sans-serif;
+}
+
+.standalone {
+  min-width: 320px;
+}
+
+.standalone .screen[hidden],
+.standalone [hidden] {
+  display: none !important;
+}
+
+.standalone .splash__background {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 31, 83, 0.08)),
+    url("./public/assets/hero-background.svg") center / cover no-repeat,
+    #000;
+}
+
+.standalone .auth-shell--flags::before {
+  background:
+    url("./public/assets/flag-pt.svg") -34px 28px / 82px 82px no-repeat,
+    url("./public/assets/flag-es.svg") 80px 28px / 82px 82px no-repeat,
+    url("./public/assets/flag-fr.svg") 194px 28px / 82px 82px no-repeat,
+    url("./public/assets/flag-gb-eng.svg") 308px 28px / 82px 82px no-repeat,
+    url("./public/assets/flag-ar.svg") 36px 132px / 82px 82px no-repeat,
+    url("./public/assets/flag-pt.svg") 150px 132px / 82px 82px no-repeat,
+    url("./public/assets/flag-es.svg") 264px 132px / 82px 82px no-repeat;
+}
+
+.standalone .free-score-card {
+  min-height: 244px;
+  height: 244px;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.42)),
+    url("./public/assets/free-score-bg.jpg");
+}
+
+.standalone img {
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.standalone .circle-button img {
+  display: block;
+  object-fit: contain;
+}
+
+.standalone .plan-pill img {
+  width: 21.5px;
+  height: 21.5px;
+  flex: 0 0 21.5px;
+}
+
+.standalone #menu-button img {
+  width: 11.5px;
+  height: 9.5px;
+}
+
+.standalone .circle-button img[src$="/back.svg"] {
+  width: 5.5px;
+  height: 11.5px;
+}
+
+.standalone .auth-footer__wordmark {
+  display: block;
+  width: 76.35px;
+  height: 19.482px;
+}
+
+.standalone .logo img:last-child {
+  width: 112px;
+  height: 28.574px;
+}
+
+.standalone .logo--compact img:last-child {
+  width: 76.35px;
+  height: 19.482px;
+}
+
+.standalone .splash__wordmark {
+  width: 322px;
+  height: 82.171px;
+}
+
+.standalone .social-actions img {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+}
+
+.standalone .social-actions button {
+  height: 64px;
+  min-height: 64px;
+  white-space: nowrap;
+}
+
+.standalone .auth-footer {
+  bottom: 21px;
+  gap: 23px;
+}
+
+.standalone .auth-hero img {
+  width: 140.566px;
+  height: 140.566px;
+}
+
+.standalone .plan-card__heading small img {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
+}
+
+.standalone .prediction-card {
+  min-height: 244px;
+}
+
+.standalone .section-heading > span {
+  display: none;
+}
+
+.standalone .standalone-back {
+  margin-bottom: 26px;
+}
+
+.standalone .account-form-wrap {
+  justify-content: center;
+}
+
+.standalone .account-form {
+  display: grid;
+  width: 100%;
+  gap: 18px;
+}
+
+.standalone .account-form label {
+  display: grid;
+  gap: 8px;
+  color: #6a927c;
+  font-size: 13px;
+}
+
+.standalone .account-form input {
+  width: 100%;
+  height: 58px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 30px;
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+}
+
+.standalone .text-button {
+  margin-top: 20px;
+  border: 0;
+  background: transparent;
+  color: #6a927c;
+  cursor: pointer;
+}
+
+.standalone .calendar__month button {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.standalone .calendar__month button:first-child {
+  transform: none;
+}
+
+.standalone .calendar__month button img {
+  display: block;
+  width: 6px;
+  height: 10px;
+  object-fit: fill;
+}
+
+.standalone .calendar__days > button {
+  display: flex;
+  min-width: 0;
+  height: 69px;
+  padding: 6px 3px 4px;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 50px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.standalone .calendar__days > button b {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 500;
+}
+
+.standalone .calendar__days > button.is-active {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.standalone .calendar__days > button.is-active b {
+  background: #fff;
+  color: #190646;
+}
+
+.standalone .filter-control button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.standalone .filter-control img {
+  width: 5px;
+  height: 10px;
+  object-fit: fill;
+  transform: rotate(90deg);
+}
+
+@media (max-width: 899px) {
+  .standalone .dashboard__content {
+    padding-top: 27px;
+  }
+}
+
+.standalone .free-score-card header h2,
+.standalone .free-score-card .primary-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.standalone .free-score-card header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.standalone .free-score-card header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.standalone .free-score-card header > span {
+  padding: 4px 12px;
+  border-radius: 40px;
+  background: #fff;
+  color: #000;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.standalone .free-score-card header h2 img,
+.standalone .free-score-card .primary-button img {
+  width: 16px;
+  height: 17px;
+  flex: 0 0 16px;
+}
+
+.standalone .free-score-card__teams img,
+.standalone .prediction-card__teams img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.standalone .free-score-card__teams,
+.standalone .prediction-card__teams {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.standalone .free-score-card__teams > div,
+.standalone .prediction-card__teams > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.standalone .free-score-card__teams > b,
+.standalone .prediction-card__teams > strong {
+  color: #575f59;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.standalone .prediction-card > button {
+  align-self: flex-end;
+  border: 0;
+  background: transparent;
+  color: #6a927c;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.standalone .status-live {
+  padding: 5px 10px;
+  border: 1px solid rgba(234, 67, 53, 0.3);
+  border-radius: 8px;
+  background: #1b0403;
+  color: #ea4335;
+}
+
+.standalone .detail-panel img,
+.standalone .history img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.standalone .detail-panel > header img {
+  width: 18px;
+  height: 18px;
+  border-radius: 0;
+}
+
+.standalone .pick-options {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.standalone .pick-options > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.standalone .standalone-more {
+  display: flex;
+  width: 18px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.standalone .standalone-more img {
+  width: 3px;
+  height: 3px;
+}
+
+.standalone .history-row > .standalone-row-arrow {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  width: 6px;
+  height: 10px;
+  border-radius: 0;
+}
+
+.standalone .standalone-modal {
+  z-index: 100;
+}
+
+.standalone .modal-close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.standalone .prediction-modal {
+  position: relative;
+}
+
+.standalone .modal-hero img {
+  width: 74px;
+}
+
+.standalone .modal-match span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.standalone .modal-match img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+@media (max-width: 899px) {
+  .standalone .details-page .page-title {
+    position: relative;
+    height: 140px;
+    margin-bottom: 28px;
+  }
+
+  .standalone .details-page .page-title > div {
+    position: absolute;
+    top: 68px;
+    left: 0;
+    width: 205px;
+  }
+
+  .standalone .details-page .page-title span {
+    display: none;
+  }
+
+  .standalone .details-page .page-title h1 {
+    margin: 0;
+    font-size: 28px;
+    line-height: normal;
+  }
+
+  .standalone .details-page .pitch-graphic {
+    position: absolute;
+    top: 68px;
+    right: 2px;
+    width: 148px;
+    height: 74px;
+  }
+
+  .standalone .details-grid {
+    gap: 8px;
+  }
+
+  .standalone .details-grid .detail-panel {
+    height: 231px;
+  }
+
+  .standalone .details-grid .score-panel {
+    height: 348px;
+  }
+
+  .standalone .details-grid .detail-panel:nth-child(3) {
+    margin-top: 2px;
+  }
+
+  .standalone .score-panel > header {
+    margin-bottom: 1px;
+  }
+
+  .standalone .score-panel .score-row {
+    height: 64px;
+    padding-top: 0;
+  }
+
+  .standalone .details-page .pick-layout {
+    align-items: start;
+  }
+
+  .standalone .details-page .pick-teams {
+    gap: 48px;
+  }
+
+  .standalone .plans-page {
+    padding: 40px 30px 130px;
+  }
+
+  .standalone .plans-page .simple-header {
+    display: none;
+  }
+
+  .standalone .plans-page .plan-grid {
+    width: 341px;
+    max-width: 100%;
+  }
+
+  .standalone .plans-page .plan-card {
+    height: 129px;
+    min-height: 129px;
+  }
+
+  .standalone .plans-page .plan-card.is-selected {
+    height: 151px;
+  }
+
+  .standalone .plans-page .plan-card:last-child {
+    height: 165px;
+  }
+
+  .standalone .profile-page .simple-header {
+    margin-bottom: 39px;
+  }
+
+  .standalone .profile-page .profile-layout {
+    width: 354px;
+    max-width: 100%;
+  }
+
+  .standalone .profile-page .history-row__teams img {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (max-width: 480px) {
+  .standalone .splash__wordmark {
+    width: 210px;
+    height: 53.588px;
+  }
+}
+
+@media (min-width: 900px) {
+  .standalone .free-score-card {
+    height: auto;
+    min-height: 270px;
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.38)),
+      url("./public/assets/free-score-bg.jpg");
+  }
+
+  .standalone .section-heading > span {
+    display: inline;
+  }
+
+  .standalone .splash__wordmark {
+    width: 390px;
+    height: 99.524px;
+  }
+}
